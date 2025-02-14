@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"ride-sharing-service/pkg/db"
 	"ride-sharing-service/pkg/dto"
 	"ride-sharing-service/pkg/models"
@@ -84,6 +85,47 @@ func FetchRideByRidePhoneNumber(database *gorm.DB, phoneNo string) (dto.RideDeta
 	}
 
 	return toRideDetailsDto(r), nil
+}
+
+func SubmitPayment(database *gorm.DB, req dto.SubmitPaymentRequestDto) (dto.SubmitPaymentResponseDto, error) {
+	// validate ride that is in processing or ongoing
+	r, e := db.GetRideById(database, req.RideId)
+
+	if e != nil {
+		return dto.SubmitPaymentResponseDto{}, e
+	}
+
+	// check the process
+	if r.Status == "FINISHED" {
+		return dto.SubmitPaymentResponseDto{}, fmt.Errorf("you are try to submit a payment to ended trip")
+	}
+	// then calculate the tip & fare amt and calcualte compare with the amount
+	totalAmount := req.FareAmount + req.TipAmount
+
+	tokenAmt, v := models.GetHardcodedPaymentToken(req.PaymentId)
+	if !v {
+		fmt.Println("Token not valid")
+		return dto.SubmitPaymentResponseDto{}, fmt.Errorf("token is not valid")
+	}
+
+	if tokenAmt-totalAmount < 0 {
+		fmt.Println("Amount mismatch")
+		return dto.SubmitPaymentResponseDto{}, fmt.Errorf("total amount does not match the expected fare")
+	}
+
+	// then set the trip ststus as finished
+	updatedRide, err := db.MarkRideAsFinished(database, req.RideId)
+	if err != nil {
+		return dto.SubmitPaymentResponseDto{}, err
+	}
+
+	res := dto.SubmitPaymentResponseDto{
+		RideId:    updatedRide.ID,
+		Status:    updatedRide.Status,
+		TotalPaid: totalAmount,
+	}
+
+	return res, nil
 }
 
 func toRideRequestResponseDto(r models.Ride) dto.RideRequestResponseDto {

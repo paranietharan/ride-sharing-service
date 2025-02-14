@@ -80,3 +80,22 @@ func FetchRideByRideByPhoneNumber(db *gorm.DB) http.HandlerFunc {
 		utils.WriteResponse(w, http.StatusOK, rideDetails)
 	}
 }
+
+func SubmitPayment(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var paymentReq dto.SubmitPaymentRequestDto
+		err := json.NewDecoder(r.Body).Decode(&paymentReq)
+		if err != nil {
+			utils.WriteErrorResponse(w, http.StatusBadRequest, "Invalid request body")
+			return
+		}
+
+		response, err := service.SubmitPayment(db, paymentReq)
+		if err != nil {
+			utils.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		utils.WriteResponse(w, http.StatusOK, response)
+	}
+}

@@ -17,6 +17,9 @@ func InitializeRoutes(db *gorm.DB) *mux.Router {
 	router.HandleFunc("/rides/{rideId}", handler.FetchRideByRideId(db)).Methods("GET")
 	router.HandleFunc("/rides/customer/{phoneNo}", handler.FetchRideByRideByPhoneNumber(db)).Methods("GET")
 
+	// payments
+	router.HandleFunc("/payments", handler.SubmitPayment(db)).Methods("POST")
+
 	return router
 }
 

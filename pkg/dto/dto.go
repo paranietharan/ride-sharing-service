@@ -50,3 +50,16 @@ type RideDetailsDto struct {
 	CompanyID       string
 	CreatedAt       time.Time
 }
+
+type SubmitPaymentRequestDto struct {
+	RideId     string  `json:"rideId"`
+	FareAmount float64 `json:"fareAmount"`
+	TipAmount  float64 `json:"tipAmount"`
+	PaymentId  string  `json:"paymentId"`
+}
+
+type SubmitPaymentResponseDto struct {
+	RideId    string  `json:"rideId"`
+	Status    string  `json:"status"`
+	TotalPaid float64 `json:"totalPaid"`
+}

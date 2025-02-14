@@ -87,14 +87,21 @@ func CreateNewRide(
 }
 
 func MarkRideAsOngoing(db *gorm.DB, rideID string) error {
-	return db.Model(&models.Ride{}).Where("ride_id = ?", rideID).Updates(map[string]interface{}{
+	return db.Model(&models.Ride{}).Where("id = ?", rideID).Updates(map[string]interface{}{
 		"status":          "ONGOING",
 		"driver_assigned": true,
 	}).Error
 }
 
-func MarkRideAsFinished(db *gorm.DB, rideID string) error {
-	return db.Model(&models.Ride{}).Where("ride_id = ?", rideID).Update("status", "COMPLETED").Error
+func MarkRideAsFinished(db *gorm.DB, rideID string) (models.Ride, error) {
+	err := db.Model(&models.Ride{}).Where("id = ?", rideID).Update("status", "COMPLETED").Error
+	if err != nil {
+		return models.Ride{}, err
+	}
+
+	r, _ := GetRideById(db, rideID)
+
+	return r, nil
 }
 
 // list all rides by the company id

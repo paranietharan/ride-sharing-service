@@ -108,3 +108,15 @@ func ListAllRidesByCompanyID(db *gorm.DB, companyID string) ([]models.Ride, erro
 
 	return rides, nil
 }
+
+// get ride details by ride id
+func GetRideById(db *gorm.DB, rideId string) (models.Ride, error) {
+	var ride models.Ride
+	err := db.Where("id = ?", rideId).Find(&ride).Error
+
+	if err != nil {
+		return models.Ride{}, err
+	}
+
+	return ride, nil
+}

@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 // for user creation endpoint
 type UserAccountCreateRequestDto struct {
 	Username string `json:"username"`
@@ -35,4 +37,16 @@ type RideDto struct {
 	Status         string
 	DriverAssigned bool
 	EstimatedFare  float64
+}
+
+type RideDetailsDto struct {
+	CustomerPhone   string
+	PickupLocation  string
+	DropoffLocation string
+	VehicleType     string
+	Status          string
+	DriverAssigned  bool
+	EstimatedFare   float64
+	CompanyID       string
+	CreatedAt       time.Time
 }

@@ -7,6 +7,7 @@ import (
 	"ride-sharing-service/pkg/service"
 	"ride-sharing-service/pkg/utils"
 
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
@@ -47,5 +48,22 @@ func RequestRide(db *gorm.DB) http.HandlerFunc {
 		}
 
 		utils.WriteResponse(w, http.StatusCreated, res)
+	}
+}
+
+func FetchRideByRideId(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		rideId := vars["rideId"]
+
+		// Fetch the ride details using the service layer
+		rideDetails, err := service.FetchRideByRideId(db, rideId)
+		if err != nil {
+			utils.WriteErrorResponse(w, http.StatusNotFound, "Ride not found")
+			return
+		}
+
+		// Write the response with the fetched ride details
+		utils.WriteResponse(w, http.StatusOK, rideDetails)
 	}
 }

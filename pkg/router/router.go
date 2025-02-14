@@ -12,7 +12,9 @@ func InitializeRoutes(db *gorm.DB) *mux.Router {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/users", handler.CreateNewUser(db)).Methods("POST")
+
 	router.HandleFunc("/rides", handler.RequestRide(db)).Methods("POST")
+	router.HandleFunc("/rides/{rideId}", handler.FetchRideByRideId(db)).Methods("GET")
 
 	return router
 }

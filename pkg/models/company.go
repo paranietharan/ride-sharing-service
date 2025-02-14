@@ -1,5 +1,10 @@
 package models
 
+import (
+	"math/rand"
+	"time"
+)
+
 var companies = []struct {
 	CompanyID   string
 	CompanyName string
@@ -16,4 +21,14 @@ func GetCompanyDetail(id string) (string, string, bool) {
 		}
 	}
 	return "", "", false
+}
+
+func GetRandomCompany() (string, string) {
+	rand.Seed(time.Now().UnixNano())
+
+	// Select a random company
+	randomIndex := rand.Intn(len(companies))
+	selectedCompany := companies[randomIndex]
+
+	return selectedCompany.CompanyID, selectedCompany.CompanyName
 }

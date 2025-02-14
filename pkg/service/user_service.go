@@ -48,6 +48,9 @@ func RequestRide(database *gorm.DB, req dto.RideRequestDto) (dto.RideRequestResp
 
 	users = append(users, u)
 
+	// select a random company
+	_, c := models.GetRandomCompany()
+
 	// Create a new ride
 	r, err := db.CreateNewRide(
 		database,
@@ -56,7 +59,7 @@ func RequestRide(database *gorm.DB, req dto.RideRequestDto) (dto.RideRequestResp
 		req.DropOffLocation,
 		req.VehicleType,
 		fare,
-		"DEFAULT",
+		c,
 		time.Now(),
 		users,
 	)

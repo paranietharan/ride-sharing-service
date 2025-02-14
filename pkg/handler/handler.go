@@ -56,14 +56,27 @@ func FetchRideByRideId(db *gorm.DB) http.HandlerFunc {
 		vars := mux.Vars(r)
 		rideId := vars["rideId"]
 
-		// Fetch the ride details using the service layer
 		rideDetails, err := service.FetchRideByRideId(db, rideId)
 		if err != nil {
 			utils.WriteErrorResponse(w, http.StatusNotFound, "Ride not found")
 			return
 		}
 
-		// Write the response with the fetched ride details
+		utils.WriteResponse(w, http.StatusOK, rideDetails)
+	}
+}
+
+func FetchRideByRideByPhoneNumber(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		phoneNo := vars["phoneNo"]
+
+		rideDetails, err := service.FetchRideByRidePhoneNumber(db, phoneNo)
+		if err != nil {
+			utils.WriteErrorResponse(w, http.StatusNotFound, "Ride not found")
+			return
+		}
+
 		utils.WriteResponse(w, http.StatusOK, rideDetails)
 	}
 }

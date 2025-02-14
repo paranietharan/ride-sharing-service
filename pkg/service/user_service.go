@@ -76,6 +76,16 @@ func FetchRideByRideId(database *gorm.DB, rideId string) (dto.RideDetailsDto, er
 	return toRideDetailsDto(r), nil
 }
 
+func FetchRideByRidePhoneNumber(database *gorm.DB, phoneNo string) (dto.RideDetailsDto, error) {
+	r, e := db.GetRideByPhoneNumber(database, phoneNo)
+
+	if e != nil {
+		return dto.RideDetailsDto{}, e
+	}
+
+	return toRideDetailsDto(r), nil
+}
+
 func toRideRequestResponseDto(r models.Ride) dto.RideRequestResponseDto {
 	rq := dto.RideRequestResponseDto{
 		RideId:         r.ID,

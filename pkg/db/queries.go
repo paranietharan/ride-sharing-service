@@ -120,3 +120,14 @@ func GetRideById(db *gorm.DB, rideId string) (models.Ride, error) {
 
 	return ride, nil
 }
+
+func GetRideByPhoneNumber(db *gorm.DB, phoneNo string) (models.Ride, error) {
+	var ride models.Ride
+	err := db.Where("customer_phone = ?", phoneNo).Find(&ride).Error
+
+	if err != nil {
+		return models.Ride{}, err
+	}
+
+	return ride, nil
+}

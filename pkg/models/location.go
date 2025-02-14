@@ -1,6 +1,5 @@
 package models
 
-// hard coded loaction
 var rideLocations = []struct {
 	start string
 	end   string
@@ -11,9 +10,11 @@ var rideLocations = []struct {
 	{"Place-C", "Place-F", 100.00},
 }
 
-func GetHardcodedRideLocation(index int) (string, string, float64, bool) {
-	if index >= 0 && index < len(rideLocations) {
-		return rideLocations[index].start, rideLocations[index].end, rideLocations[index].fare, true
+func GetHardcodedRideLocation(pickup string, drop string) (float64, bool) {
+	for _, location := range rideLocations {
+		if location.start == pickup && location.end == drop {
+			return location.fare, true
+		}
 	}
-	return "", "", 0, false
+	return 0, false
 }

@@ -1,20 +1,27 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"ride-sharing-service/pkg/config"
 	"ride-sharing-service/pkg/models"
+	"ride-sharing-service/pkg/router"
 )
 
 func main() {
-	config.Connect()
+	db := config.Connect()
 	defer config.Disconnect()
 
-	// code to create the table if there is a first time start
-	err := config.DB.AutoMigrate(&models.User{}, &models.Ride{}, &models.UserRides{})
+	err := db.AutoMigrate(&models.User{}, &models.Ride{}, &models.UserRides{})
 	if err != nil {
 		log.Fatalf("Error migrating schema: %v", err)
 	}
+	log.Println("Database tables migrated successfully!")
 
-	log.Println("Tables created successfully!")
+	r := router.InitializeRoutes(db)
+
+	port := ":8080"
+	fmt.Println("Server started on port", port)
+	log.Fatal(http.ListenAndServe(port, r))
 }

@@ -1,9 +1,11 @@
 package db
 
 import (
+	"fmt"
 	"ride-sharing-service/pkg/models"
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -36,9 +38,10 @@ func GetUserByID(db *gorm.DB, userId int) (models.User, error) {
 func GetByPhoneNumber(db *gorm.DB, phoneNo string) (models.User, error) {
 	var user models.User
 
-	result := db.First(&user, user.ID)
+	result := db.Where("phone = ?", phoneNo).First(&user)
 
 	if result.Error != nil {
+		fmt.Println("No user found with phone number:", phoneNo)
 		return models.User{}, result.Error
 	}
 
@@ -47,7 +50,6 @@ func GetByPhoneNumber(db *gorm.DB, phoneNo string) (models.User, error) {
 
 func CreateNewRide(
 	db *gorm.DB,
-
 	customerPhone string,
 	pickupLocation string,
 	dropoffLocation string,
@@ -57,7 +59,9 @@ func CreateNewRide(
 	createdAt time.Time,
 	users []models.User,
 ) (models.Ride, error) {
+
 	ride := models.Ride{
+		ID:              uuid.New().String(),
 		CustomerPhone:   customerPhone,
 		PickupLocation:  pickupLocation,
 		DropoffLocation: dropoffLocation,
@@ -69,14 +73,12 @@ func CreateNewRide(
 		CreatedAt:       createdAt,
 	}
 
-	err := db.Create(&ride).Error
-	if err != nil {
+	if err := db.Create(&ride).Error; err != nil {
 		return models.Ride{}, err
 	}
 
 	for _, user := range users {
-		err := db.Model(&user).Association("Rides").Append(&ride)
-		if err != nil {
+		if err := db.Model(&user).Association("Rides").Append(&ride); err != nil {
 			return models.Ride{}, err
 		}
 	}

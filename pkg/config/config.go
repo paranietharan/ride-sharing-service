@@ -13,7 +13,7 @@ import (
 var DB *gorm.DB
 
 // Connection
-func Connect() {
+func Connect() *gorm.DB {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Error loading .env file, %s", err)
@@ -37,6 +37,7 @@ func Connect() {
 	}
 
 	fmt.Println("Successfully connected to PostgreSQL database successfully.........")
+	return DB
 }
 
 func Disconnect() {

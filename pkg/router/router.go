@@ -1,32 +1,31 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
+	"ride-sharing-service/pkg/handler"
 
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
 
-func InitializeRoutes() *mux.Router {
+func InitializeRoutes(db *gorm.DB) *mux.Router {
 	router := mux.NewRouter()
 
-	//router.HandleFunc("/books", handlers.GetBooks).Methods("GET")
+	router.HandleFunc("/users", handler.CreateNewUser(db)).Methods("POST")
+	router.HandleFunc("/rides", handler.RequestRide(db)).Methods("POST")
 
 	return router
 }
 
-func StartServer() {
-	router := InitializeRoutes()
+func StartServer(db *gorm.DB) {
+	router := InitializeRoutes(db)
 	http.Handle("/", router)
 
-	// create goroutines &
-	// Start the server
 	server := &http.Server{Addr: ":8080"}
 
-	fmt.Println("Server started on port 8080...")
 	go func() {
 		if err := server.ListenAndServe(); err != nil {
-			fmt.Println("Server stopped:", err)
+			panic(err)
 		}
 	}()
 }

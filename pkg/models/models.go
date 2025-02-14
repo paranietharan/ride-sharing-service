@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	ID       int    `json:"id" gorm:"primaryKey"`
@@ -12,7 +14,7 @@ type User struct {
 }
 
 type Ride struct {
-	ID              int       `json:"id" gorm:"primaryKey"`
+	ID              string    `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	CustomerPhone   string    `json:"customerPhone"`
 	PickupLocation  string    `json:"pickupLocation"`
 	DropoffLocation string    `json:"dropoffLocation"`
@@ -26,6 +28,6 @@ type Ride struct {
 }
 
 type UserRides struct {
-	UserID int `gorm:"primaryKey"`
-	RideID int `gorm:"primaryKey"`
+	UserID int    `gorm:"primaryKey"`
+	RideID string `gorm:"primaryKey"`
 }
